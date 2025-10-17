@@ -24,3 +24,9 @@
 
 ### 最終レビュー
 - 最終的なレビューは Session7 の終了時に行います。
+
+
+### 最新のFlutterを使用
+fvm install stable
+fvm use stable
+flutter pub get
