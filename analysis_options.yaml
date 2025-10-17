@@ -31,7 +31,6 @@ linter:
     non_constant_identifier_names: true
     only_throw_errors: true
     prefer_const_constructors: true
-    prefer_expression_function_bodies: true
     prefer_is_empty: true
     prefer_final_locals: true
     prefer_relative_imports: true
