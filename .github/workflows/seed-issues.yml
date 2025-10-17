@@ -1,0 +1,129 @@
+name: Seed project issues
+
+on:
+  create:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  seed:
+    if: >
+      github.event.repository.is_template == false
+      && github.event.repository.name != 'sandbox-Intermediate-template'
+      && (
+        (
+          github.event_name == 'create'
+          && github.event.ref_type == 'branch'
+          && github.event.ref == github.event.repository.default_branch
+        )
+        ||
+        (
+          github.event_name == 'push'
+          && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        )
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check seeding marker
+        id: marker
+        run: |
+          if [ -f ".github/.issues-seeded" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Seeding marker already present; skipping issue creation."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create onboarding issues
+        if: steps.marker.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_LABEL: task
+          ISSUE_DIR: .github/training_tasks
+        run: |
+          set -euo pipefail
+
+          if [ ! -d "$ISSUE_DIR" ]; then
+            echo "Issue directory not found: $ISSUE_DIR"
+            exit 0
+          fi
+
+          if ! gh label view "$ISSUE_LABEL" > /dev/null 2>&1; then
+            echo "Creating missing label: $ISSUE_LABEL"
+            gh label create "$ISSUE_LABEL" --color 'F4B400' --description 'Training task'
+          fi
+
+          existing_titles_json="$(gh issue list --state all --label "$ISSUE_LABEL" --limit 200 --json title)"
+          if [ -z "$existing_titles_json" ]; then
+            existing_titles_json="[]"
+          fi
+
+          shopt -s nullglob
+          for file in "$ISSUE_DIR"/*.md; do
+            title="$(head -n1 "$file" | sed 's/^# //')"
+            if [ -z "$title" ]; then
+              echo "Skipping $file because the first line does not contain a title."
+              continue
+            fi
+
+            if echo "$existing_titles_json" | jq -e --arg title "$title" '.[] | select(.title == $title)' > /dev/null; then
+              echo "Issue already exists: $title"
+              continue
+            fi
+
+            body_file="$(mktemp)"
+            tail -n +2 "$file" > "$body_file"
+
+            echo "Creating issue: $title"
+            gh issue create \
+              --title "$title" \
+              --body-file "$body_file" \
+              --label "$ISSUE_LABEL"
+
+            rm -f "$body_file"
+
+            existing_titles_json="$(echo "$existing_titles_json" | jq --arg title "$title" '. + [{ "title": $title }]')"
+          done
+
+      - name: Record seeding run
+        if: steps.marker.outputs.exists != 'true'
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+
+          marker=".github/.issues-seeded"
+
+          if [ -f "$marker" ]; then
+            echo "Marker already exists; skipping commit."
+            exit 0
+          fi
+
+          mkdir -p "$(dirname "$marker")"
+          {
+            echo "# Issues seeded"
+            echo "timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > "$marker"
+
+          default_branch="${DEFAULT_BRANCH:-}"
+          if [ -z "$default_branch" ]; then
+            default_branch="$(git rev-parse --abbrev-ref HEAD)"
+          fi
+
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add "$marker"
+          git commit -m "chore: record issue seeding"
+          git push origin "HEAD:${default_branch}"
+
+      - name: Skip confirmation
+        if: steps.marker.outputs.exists == 'true'
+        run: echo "Seeding already completed in a previous run."
