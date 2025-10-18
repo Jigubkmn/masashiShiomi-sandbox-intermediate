@@ -1,1 +1,48 @@
-{"flutter":{"platforms":{"ios":{"default":{"projectId":"sandbox-intermediate-ecc59","appId":"1:581950813655:ios:bbe280dc38f8d65641c792","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"sandbox-intermediate-ecc59","configurations":{"ios":"1:581950813655:ios:bbe280dc38f8d65641c792"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "ios": {
+        "default": {
+          "projectId": "sandbox-intermediate-ecc59",
+          "appId": "1:581950813655:ios:bbe280dc38f8d65641c792",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "sandbox-intermediate-ecc59",
+          "configurations": {
+            "ios": "1:581950813655:ios:bbe280dc38f8d65641c792"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-east1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ],
+  "storage": {
+    "rules": "storage.rules"
+  }
+}
