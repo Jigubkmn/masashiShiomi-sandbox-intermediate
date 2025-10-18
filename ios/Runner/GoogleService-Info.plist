@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyDxTN_MH_Rp6LW1nnwAaCHU-6-e7HBk90U</string>
+	<string>AIzaSyB_t23cJt9n77-yU4T8CRHJ8DlDEii4jpk</string>
 	<key>GCM_SENDER_ID</key>
-	<string>581950813655</string>
+	<string>447730302991</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.sandbox</string>
 	<key>PROJECT_ID</key>
-	<string>sandbox-intermediate-ecc59</string>
+	<string>sandbox-intermediate-dev</string>
 	<key>STORAGE_BUCKET</key>
-	<string>sandbox-intermediate-ecc59.firebasestorage.app</string>
+	<string>sandbox-intermediate-dev.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:581950813655:ios:bbe280dc38f8d65641c792</string>
+	<string>1:447730302991:ios:cef412b7150ac6ae11e37a</string>
 </dict>
 </plist>

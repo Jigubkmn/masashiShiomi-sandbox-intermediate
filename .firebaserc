@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "sandbox-intermediate-ecc59"
-  }
+    "default": "sandbox-intermediate-ecc59",
+    "env": "sandbox-intermediate-dev"
+  },
+  "targets": {},
+  "etags": {}
 }
